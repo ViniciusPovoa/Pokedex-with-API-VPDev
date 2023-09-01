@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
 import './Card.css';
+import PokemonModal from './PokemonModal'; // Certifique-se do caminho correto
 
 const Card = ({ pokemon }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
+  const openModal = () => {
+    setIsModalOpen(true);
   };
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="card" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <h1>{pokemon.name}</h1>
-      {pokemon.sprites && pokemon.sprites.front_default && (
-        <img src={pokemon.sprites.front_default} alt={pokemon.name} />
-      )}
-      <div className={`type ${isHovered ? 'hovered' : ''}`}>
-        <p>Tipo: {pokemon.types.map((type) => type.name.toUpperCase()).join(' | ')}</p>
+    <div>
+      <div className="card" onClick={openModal}>
+        <h1>{pokemon.name}</h1>
+        {pokemon.sprites && pokemon.sprites.front_default && (
+          <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+        )}
+        <div className={`type`}>
+          <p>Tipo: {pokemon.types.map((type) => type.name.toUpperCase()).join(' | ')}</p>
+        </div>
       </div>
+      {isModalOpen && <PokemonModal pokemon={pokemon} onClose={closeModal} />}
     </div>
   );
 };

@@ -39,8 +39,26 @@ function App() {
           ...pokemon,
           types: [types[index]],
         }));
+
+        const abilitiesPromises = modifiedRes.map(async (pokemon) => {
+          const abilitiesData = await Promise.all(
+            pokemon.abilities.map(async (ability) => {
+              const response = await fetch(ability.ability.url);
+              return response.json();
+            })
+          );
+          return abilitiesData;
+        });
+
+        const abilities = await Promise.all(abilitiesPromises);
+
+        // Combinar as habilidades com os dados do Pokémon
+        const pokemonWithTypesAndAbilities = pokemonWithTypes.map((pokemon, index) => ({
+          ...pokemon,
+          abilities: abilities[index]
+        }));
   
-        setItens(pokemonWithTypes);
+        setItens(pokemonWithTypesAndAbilities);
       } catch (error) {
         console.log(error);
       }
@@ -65,7 +83,7 @@ function App() {
         {itens
           .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
           .map((item, index) => (
-            <Card key={index} pokemon={item} types={item.types} />
+            <Card key={index} pokemon={item} types={item.types} abilities={item.abilities} />
           ))}
       </div>
     </div>
